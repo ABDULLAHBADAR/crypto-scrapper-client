@@ -1,0 +1,78 @@
+.Main-head {
+    text-align: center;
+    padding-top: 30px;
+  }
+  .App {
+    background-color: rgb(139, 162, 188) !important;
+    /* height: 100vh !important; */
+  }
+  
+  .main-container {
+    display: flex !important;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-top: 30px;
+    padding-bottom: 50px;
+  }
+  @media (max-width: 950px) {
+    .main-container {
+      flex-direction: column;
+      margin: 30px;
+      align-items: center;
+    }
+    .container1 {
+      margin-bottom: 40px;
+    }
+  }
+  .container1 {
+    max-width: 300px !important;
+    border: 2px slategray solid !important;
+    border-radius: 10px;
+    /* margin-top: 30px !important;
+    margin-left: 80px !important; */
+    padding: 50px 50px !important;
+    background-color: rgb(218, 225, 232);
+  }
+  
+  .container2 {
+    padding: 10px !important;
+    width: 350px !important;
+    height: 500px !important;
+    background-color: rgb(218, 225, 232);
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: auto;
+    border: 4px solid rgb(25, 62, 100);
+    border-radius: 10px;
+  }
+
+  .alarm {
+    margin-top: 10px;
+    color: rgb(128, 98, 60);
+  }
+  
+  .input-group {
+    height: 100% !important;
+  }
+  
+  .form-label {
+    font-size: large !important;
+    font-weight: 1000;
+    margin-bottom: 30px !important;
+  }
+  .form-check {
+    margin-bottom: 20px !important;
+  }
+  
+  .form-check-label {
+    font-size: 15px !important;
+  }
+  
+  .btn-primary {
+    margin-top: 30px !important;
+    padding-left: 30px !important;
+    padding-right: 30px !important;
+  }
+  
+  
+  
+  
