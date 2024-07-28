@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './dashboard.css';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Alert } from 'react-bootstrap';
+import Dropdown from 'react-bootstrap/Dropdown';
+
 import InputGroup from 'react-bootstrap/InputGroup';
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -13,26 +15,35 @@ import { v4 as uuidv4 } from 'uuid';
 const Dashboard = ({ auth, logoutUser }) => {
   const [data, setData] = useState([]);
 
-  const [selectedOptionGroup1, setSelectedOptionGroup1] = useState('age(oldest first)');
+  const [ageMin, setAgeMin] = useState('');
+  const [ageMax, setAgeMax] = useState('');
+  const [volumeMin, setVolumeMin] = useState('');
+  const [volumeMax, setVolumeMax] = useState('');
+  const [tmcapMin, setTmcapMin] = useState('');
+  const [tmcapMax, setTmcapMax] = useState('');
+
   const [state, setState] = useState();
   const [alarm, setAlarm] = useState(false);
   const [clientId] = useState(uuidv4());
+  const [error, setError] = useState('');
+
+
 
   useEffect(() => {
     const ws = new WebSocket(`ws://localhost:3000/${clientId}`);
 
     ws.onmessage = (event) => {
       const newData = JSON.parse(event.data);
-      
+
       setData((prevData) => {
         // Check if newData already exists in prevData
         const exists = prevData.some(data => JSON.stringify(data) === JSON.stringify(newData));
-        
+
         // Only add newData if it doesn't already exist
         if (!exists) {
           return [...prevData, newData];
         }
-        
+
         // Return prevData unchanged if newData already exists
         return prevData;
       });
@@ -45,29 +56,65 @@ const Dashboard = ({ auth, logoutUser }) => {
 
 
 
-  const handleRadioChangeGroup1 = (event) => {
-    setSelectedOptionGroup1(event.target.value);
-  };
+
+
+
   const { user } = auth;
   console.log(user)
+  useEffect(() => {
+    if (user.paymentStatus === 'unpaid') {
+      console.log("Payment is unpaid");
+      window.location.href = 'https://commerce.coinbase.com/checkout/de28a0c3-2542-4555-805e-bc7b6b625625';
+    } else {
+      console.log("Payment is paid");
+    }
+  }, [auth, user.paymentStatus]);
   const onLogout = e => {
     e.preventDefault();
     logoutUser();
   };
+
+  const handleNumberChange = (setter) => (e) => {
+    const value = e.target.value;
+    if (/^\d*$/.test(value)) {
+      setter(value);
+    }
+  };
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(`Selected option for Group 1: ${selectedOptionGroup1}`);
-    const myRequest = { message: selectedOptionGroup1, clientId }; 
-
+    if (ageMin !== '' && ageMax !== '' && parseInt(ageMin) > parseInt(ageMax)) {
+      console.log("Age min is greater")
+      setError('Age Min should not be greater than Age Max');
+      return;
+    }
+    if (volumeMin !== '' && volumeMax !== '' && parseInt(volumeMin) > parseInt(volumeMax)) {
+      setError('Volume Min should not be greater than Volume Max');
+      return;
+    }
+    if (tmcapMin !== '' && tmcapMax !== '' && parseInt(tmcapMin) > parseInt(tmcapMax)) {
+      setError('TmCap Min should not be greater than TmCap Max');
+      return;
+    }
+    setError('');
     try {
-      //Check If the scrapper for current client ID is already running on Backend
+      // Check if the scrapper for the current client ID is already running on the backend
       const clients = await fetch(`http://localhost:3000/clients?client=${encodeURIComponent(clientId)}`);
       const returned = await clients.json();
-      console.log(returned)
+      console.log(returned);
       if (returned) {
         setAlarm(true);
         return;
       }
+
+      const myRequest = {
+        ageMin: ageMin,
+        ageMax: ageMax,
+        volumeMin: volumeMin,
+        volumeMax: volumeMax,
+        tmcapMin: tmcapMin,
+        tmcapMax: tmcapMax,
+        clientId: clientId
+      };
 
       const response = await fetch("http://localhost:3000", {
         method: "POST",
@@ -76,14 +123,15 @@ const Dashboard = ({ auth, logoutUser }) => {
         },
         body: JSON.stringify(myRequest),
       });
+      console.log(response);
       if (response) {
-        setState('Scrapper Starting....')
+        setState('Scrapper Starting....');
       }
-      
+
       const result = await response.json();
       console.log("Success:", result);
     } catch (error) {
-      setState("Could not start Scrapper....")
+      setState("Could not start Scrapper....");
       console.error("Error:", error);
     }
   };
@@ -106,89 +154,91 @@ const Dashboard = ({ auth, logoutUser }) => {
             >
               Logout
             </button>
-            
+
           </div>
-          
+
         </div>
         <h4 className="alarm">
-        {alarm ? 'Please retry on new Tab' : ''}
+          {alarm ? 'Please retry on new Tab' : ''}
         </h4>
       </div>
       <div className="main-container">
         <div className="container1">
-          <Form onSubmit={handleSubmit} className='my-form'>
-            {/* Radio button group 1 */}
-            <Form.Group>
-              <Form.Label>Select the filter </Form.Label>
-              <div>
-                {/* On single Click on Age on Backend */}
-                <Form.Check
-                  type="radio"
-                  label="Age (Oldest First)"
-                  name="group1"
-                  value="age(oldest first)"
-                  checked={selectedOptionGroup1 === 'age(oldest first)'}
-                  onChange={handleRadioChangeGroup1}
-                />
-                {/* On Double Click on Age on Backend */}
-                <Form.Check
-                  type="radio"
-                  label="Age (Recent First)"
-                  name="group1"
-                  value="age(recent first)"
-                  checked={selectedOptionGroup1 === 'age(recent first)'}
-                  onChange={handleRadioChangeGroup1}
-                />
-                {/* On single Click on Volume on Backend */}
-                <Form.Check
-                  type="radio"
-                  label="Volume (Highest First)"
-                  name="group1"
-                  value="volume(highest first)"
-                  checked={selectedOptionGroup1 === 'volume(highest first)'}
-                  onChange={handleRadioChangeGroup1}
-                />
-                {/* On Double Click on Age on Backend */}
-                <Form.Check
-                  type="radio"
-                  label="Volume (Lowest First)"
-                  name="group1"
-                  value="volume(lowest first)"
-                  checked={selectedOptionGroup1 === 'volume(lowest first)'}
-                  onChange={handleRadioChangeGroup1}
-                />
 
-                <Form.Check
-                  type="radio"
-                  label="T.M Cap (Highest First)"
-                  name="group1"
-                  value="tmcap(highest first)"
-                  checked={selectedOptionGroup1 === 'tmcap(highest first)'}
-                  onChange={handleRadioChangeGroup1}
-                />
-                <Form.Check
-                  type="radio"
-                  label="T.M Cap (Low First)"
-                  name="group1"
-                  value="tmcap(low first)"
-                  checked={selectedOptionGroup1 === 'tmcap(low first)'}
-                  onChange={handleRadioChangeGroup1}
-                />
+          {error && <Alert variant="danger">{error}</Alert>}
+          <div className="age">
+            <InputGroup className="mb-3">
+              <InputGroup.Text id="basic-addon1">Age</InputGroup.Text>
+              <Form.Control
+                placeholder="Min - hours"
+                aria-label="min hours"
+                aria-describedby="min hours"
+                value={ageMin}
+                onChange={handleNumberChange(setAgeMin)}
+              />
+            </InputGroup>
+            <InputGroup className="mb-3">
+              <InputGroup.Text id="basic-addon1">Age</InputGroup.Text>
+              <Form.Control
+                placeholder="Max - hours"
+                aria-label="max hours"
+                aria-describedby="max hours"
+                value={ageMax}
+                onChange={handleNumberChange(setAgeMax)}
+              />
+            </InputGroup>
+          </div>
+          <div className="volume">
+            <InputGroup className="mb-3">
+              <InputGroup.Text id="basic-addon1">Volume</InputGroup.Text>
+              <Form.Control
+                placeholder="Min $"
+                aria-label="min vol"
+                aria-describedby="min vol"
+                value={volumeMin}
+                onChange={handleNumberChange(setVolumeMin)}
+              />
+            </InputGroup>
+            <InputGroup className="mb-3">
+              <InputGroup.Text id="basic-addon1">Volume</InputGroup.Text>
+              <Form.Control
+                placeholder="Max $"
+                aria-label="max vol"
+                aria-describedby="max vol"
+                value={volumeMax}
+                onChange={handleNumberChange(setVolumeMax)}
+              />
+            </InputGroup>
+          </div>
+          <div className="tmcap">
+            <InputGroup className="mb-3">
+              <InputGroup.Text id="basic-addon1">TmCap</InputGroup.Text>
+              <Form.Control
+                placeholder="Min $"
+                aria-label="min tmcap"
+                aria-describedby="min tmcap"
+                value={tmcapMin}
+                onChange={handleNumberChange(setTmcapMin)}
+              />
+            </InputGroup>
+            <InputGroup className="mb-3">
+              <InputGroup.Text id="basic-addon1">TmCap</InputGroup.Text>
+              <Form.Control
+                placeholder="Max $"
+                aria-label="max tmcap"
+                aria-describedby="max tmcap"
+                value={tmcapMax}
+                onChange={handleNumberChange(setTmcapMax)}
+              />
+            </InputGroup>
+          </div>
+          <Button onClick={handleSubmit} variant="primary" type="button">
+            Submit
+          </Button>
 
-              </div>
-            </Form.Group>
-
-            {/* Radio button group 2 */}
-
-
-            <Button variant="primary" type="submit">
-              Submit
-            </Button>
-            
-          </Form>
         </div>
         <div className="container2">
-          {state} 
+          {state}
           <ul>
             {data.map((item, index) => (
               <li key={index}>
