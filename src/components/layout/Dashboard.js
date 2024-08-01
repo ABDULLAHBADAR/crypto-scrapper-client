@@ -77,12 +77,12 @@ const Dashboard = ({ auth, logoutUser }) => {
   console.log(user)
   useEffect(() => {
     handleSubscription()
-    if (user.paymentStatus === 'unpaid') {
-      console.log("Payment is unpaid");
-      window.location.href = 'https://commerce.coinbase.com/checkout/de28a0c3-2542-4555-805e-bc7b6b625625';
-    } else {
-      console.log("Payment is paid");
-    }
+    // if (user.paymentStatus === 'unpaid') {
+    //   console.log("Payment is unpaid");
+    //   window.location.href = 'https://commerce.coinbase.com/checkout/de28a0c3-2542-4555-805e-bc7b6b625625';
+    // } else {
+    //   console.log("Payment is paid");
+    // }
   }, [auth, user.paymentStatus]);
   const onLogout = e => {
     e.preventDefault();
