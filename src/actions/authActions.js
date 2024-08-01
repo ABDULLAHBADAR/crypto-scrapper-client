@@ -6,7 +6,7 @@ import { GET_ERRORS, SET_CURRENT_USER } from "./types";
 
 //Register User
 export const registerUser = (userData, history) => dispatch => {
-  axios.post(`http://localhost:3000/api/users/register`,userData)
+  axios.post(`https://2217-39-40-57-16.ngrok-free.app/api/users/register`,userData)
   .then(res => history.push("/login"))
   .catch(err=> dispatch({
     type:GET_ERRORS,
@@ -16,7 +16,7 @@ export const registerUser = (userData, history) => dispatch => {
 
 //Login
 export const loginUser = (userData) => dispatch => {
-  axios.post(`http://localhost:3000/api/users/login`,userData)
+  axios.post(`https://2217-39-40-57-16.ngrok-free.app/api/users/login`,userData)
   .then( res => {
       const {token} = res.data;
       // Set token to localStorage
