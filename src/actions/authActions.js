@@ -6,7 +6,7 @@ import { GET_ERRORS, SET_CURRENT_USER } from "./types";
 
 //Register User
 export const registerUser = (userData, history) => dispatch => {
-  axios.post(`https://2217-39-40-57-16.ngrok-free.app/api/users/register`,userData)
+  axios.post(`https://crypto-scrapper-server.onrender.com/api/users/register`,userData)
   .then(res => history.push("/login"))
   .catch(err=> dispatch({
     type:GET_ERRORS,
@@ -14,12 +14,10 @@ export const registerUser = (userData, history) => dispatch => {
   }))
 }
 
-//Login
 export const loginUser = (userData) => dispatch => {
-  axios.post(`https://2217-39-40-57-16.ngrok-free.app/api/users/login`,userData)
+  axios.post(`https://crypto-scrapper-server.onrender.com/api/users/login`,userData)
   .then( res => {
       const {token} = res.data;
-      // Set token to localStorage
       localStorage.setItem("jwtToken", token);
       // Set token to Auth header
       setAuthToken(token);
