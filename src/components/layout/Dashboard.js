@@ -113,7 +113,7 @@ const Dashboard = ({ auth, logoutUser }) => {
     setError('');
     try {
       // Check if the scrapper for the current client ID is already running on the backend
-      const clients = await fetch(`https://crypto-scrapper-server.onrender.com/clients?client=${encodeURIComponent(clientId)}`);
+      const clients = await fetch(`https://crypto-scrapper-server.onrender.com/sockets?client=${encodeURIComponent(clientId)}`);
       const returned = await clients.json();
       console.log(returned);
       if (returned) {
