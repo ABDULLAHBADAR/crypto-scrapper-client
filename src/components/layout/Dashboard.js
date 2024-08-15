@@ -32,7 +32,7 @@ const Dashboard = ({ auth, logoutUser }) => {
   const handleSubscription = async () => {
     const { user } = auth;
     const clients = await fetch(
-      `https://crypto-scrapper-server.onrender.com/api/users/getUser?email=${user.email}`
+      `http://localhost:3000/api/users/getUser?email=${user.email}`
     );
     const res= await clients.json()
     // console.log(clients.json())
@@ -44,7 +44,7 @@ const Dashboard = ({ auth, logoutUser }) => {
   }
 
   useEffect(() => {
-    const ws = new WebSocket(`wss://crypto-scrapper-server.onrender.com/${clientId}`);
+    const ws = new WebSocket(`ws://localhost:3000/${clientId}`);
 
     ws.onmessage = (event) => {
       const newData = JSON.parse(event.data);
@@ -113,7 +113,7 @@ const Dashboard = ({ auth, logoutUser }) => {
     setError('');
     try {
       // Check if the scrapper for the current client ID is already running on the backend
-      const clients = await fetch('https://crypto-scrapper-server.onrender.com/sockets', {
+      const clients = await fetch('http://localhost:3000/sockets', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -139,7 +139,7 @@ const Dashboard = ({ auth, logoutUser }) => {
         clientId: clientId
       };
 
-      const response = await fetch("https://crypto-scrapper-server.onrender.com/", {
+      const response = await fetch("http://localhost:3000/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
