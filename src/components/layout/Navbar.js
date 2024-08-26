@@ -6,7 +6,7 @@ const Navbar = () => {
     <>
       <nav className="navbar bg-light justify-content-center">
         <Link className="navbar-brand text-dark font-weight-bold" to="/">
-          <i className="fa fa-btc"></i> Typhoon telegram scrapper
+          <i className="fa fa-btc"></i> Typhoon Telegram Scrapper
         </Link>
       </nav>
     </>

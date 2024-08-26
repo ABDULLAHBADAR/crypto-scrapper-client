@@ -165,10 +165,10 @@ const Dashboard = ({ auth, logoutUser }) => {
         <div className="row">
           <div className="col-sm-12">
             <h4>
-              Hey there, <b className="name-lable">{user.name.split(" ")[0]}</b>
+              Hey there, <b className="name-lable">{user.name.split(" ")[0].toUpperCase()}</b>
               <p className="mt-4">
                 You are logged in to{" "}
-                <span style={{ fontFamily: "monospace" }}>Typhoon telegram scrapper</span> 👏
+                <span style={{ fontFamily: "monospace" }}>Typhoon Telegram Scrapper</span> 👏
               </p>
             </h4>
             <button
