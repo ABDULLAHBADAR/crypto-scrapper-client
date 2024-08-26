@@ -148,7 +148,7 @@ const Dashboard = ({ auth, logoutUser }) => {
       });
       console.log(response);
       if (response) {
-        setState('Scrapper Starting....');
+        setState('Please wait while scrapper fetches the data....');
       }
 
       const result = await response.json();
@@ -213,7 +213,7 @@ const Dashboard = ({ auth, logoutUser }) => {
             <InputGroup className="mb-3">
               <InputGroup.Text id="basic-addon1">Age</InputGroup.Text>
               <Form.Control
-                placeholder="Min - hours"
+                placeholder="Min - Hours"
                 aria-label="min hours"
                 aria-describedby="min hours"
                 value={ageMin}
@@ -223,7 +223,7 @@ const Dashboard = ({ auth, logoutUser }) => {
             <InputGroup className="mb-3">
               <InputGroup.Text id="basic-addon1">Age</InputGroup.Text>
               <Form.Control
-                placeholder="Max - hours"
+                placeholder="Max - Hours"
                 aria-label="max hours"
                 aria-describedby="max hours"
                 value={ageMax}
